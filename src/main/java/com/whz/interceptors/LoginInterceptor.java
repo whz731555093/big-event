@@ -1,0 +1,38 @@
+package com.whz.interceptors;
+
+import com.whz.pojo.Result;
+import com.whz.utils.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
+
+import java.util.Map;
+
+/**
+ * @author whz
+ * @description 拦截器 用于统一进行token验证
+ * @since 2024/8/13 22:51
+ */
+@Component
+public class LoginInterceptor implements HandlerInterceptor {
+
+    /*
+     * @param
+     * @return true-验证通过； false-验证失败
+     * @date
+    **/
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        // 令牌验证
+        String token = request.getHeader("Authorization");
+        // 验证token
+        try {
+            Map<String, Object> claims = JwtUtil.parseToken(token);
+            return true;
+        } catch(Exception e) {
+            response.setStatus(401);    // 设置http响应状态码为401
+            return false;
+        }
+    }
+}
