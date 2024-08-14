@@ -5,12 +5,11 @@ import com.whz.pojo.User;
 import com.whz.service.UserService;
 import com.whz.utils.JwtUtil;
 import com.whz.utils.Md5Util;
+import com.whz.utils.ThreadLocalUtil;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +27,15 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    /**
+     * @description 用户注册
+     *
+     * @param userName
+     * @param password
+     * @return
+     * @return com.whz.pojo.Result
+     * @date
+     */
     @PostMapping("/register")
     public Result register(@Pattern(regexp = "^\\S{5,16}$") String userName,
            @Pattern(regexp = "^\\S{5,16}$")String password) {
@@ -42,6 +50,15 @@ public class UserController {
         }
     }
 
+    /**
+     * @description 用户登录
+     *
+     * @param userName
+     * @param password
+     * @return
+     * @return com.whz.pojo.Result<java.lang.String>
+     * @date
+     */
     @PostMapping("/login")
     public Result<String> login(@Pattern(regexp = "^\\S{5,16}$") String userName,
             @Pattern(regexp = "^\\S{5,16}$")String password) {
@@ -62,5 +79,28 @@ public class UserController {
         }
 
         return Result.error("密码错误");
+    }
+
+    /**
+     * @description 获取用户信息列表的两个版本
+     * @return
+     * @return Result<User>
+     * @date
+     **/
+//    @GetMapping("/userInfo")
+//    public Result<User> userInfo(@RequestHeader(name = "Authorization") String token) {
+//        // 根据用户名查询用户
+//        Map<String, Object> map = JwtUtil.parseToken(token);
+//        String userName = (String)map.get("username");
+//
+//        User user = userService.findByUserName(userName);
+//        return Result.success(user);
+//    }
+    @GetMapping("/userInfo")
+    public Result<User> userInfo() {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        String userName = (String)map.get("username");  // 对应表中的username列
+        User user = userService.findByUserName(userName);
+        return Result.success(user);
     }
 }

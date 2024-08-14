@@ -8,9 +8,24 @@ import com.whz.pojo.User;
  * @since 2024/8/11 22:22
  */
 public interface UserService {
-    // 根据用户名查询用户
+
+    /**
+     * @description 根据用户名查询用户
+     *
+     * @param userName
+     * @return
+     * @return com.whz.pojo.User
+     * @date
+     */
     User findByUserName(String userName);
 
-    // 注册
+    /**
+     * @description 注册
+     *
+     * @param userName
+     * @param password
+     * @return
+     * @date
+     */
     void register(String userName, String password);
 }

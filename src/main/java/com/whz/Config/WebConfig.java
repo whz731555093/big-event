@@ -16,9 +16,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Autowired
     private LoginInterceptor loginInterceptor;
 
-    /*
+    /**
      * @description 注册拦截器
-     * @param null
+     * @param registry
      * @return null
      * @date
     **/

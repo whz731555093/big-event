@@ -17,12 +17,27 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
 
+    /**
+     * @description 根据用户名查询用户
+     *
+     * @param userName
+     * @return
+     * @return com.whz.pojo.User
+     * @date
+     */
     @Override
     public User findByUserName(String userName) {
-        User u = userMapper.findByUserName(userName);
-        return u;
+        return userMapper.findByUserName(userName);
     }
 
+    /**
+     * @description 注册
+     *
+     * @param userName
+     * @param password
+     * @return
+     * @date
+     */
     @Override
     public void register(String userName, String password) {
         // 加密
