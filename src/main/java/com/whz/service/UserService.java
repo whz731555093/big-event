@@ -28,4 +28,31 @@ public interface UserService {
      * @date
      */
     void register(String userName, String password);
+
+    /**
+     * @description 更新用户信息
+     *
+     * @param user
+     * @return
+     * @date
+     */
+    void update(User user);
+
+    /**
+     * @description 更新头像
+     *
+     * @param avatarUrl
+     * @return
+     * @date
+     */
+    void updateAvatar(String avatarUrl);
+
+    /**
+     * @description 更新密码
+     *
+     * @param newPassword
+     * @return
+     * @date
+     */
+    void updatePwd(String newPassword);
 }

@@ -7,13 +7,14 @@ import com.whz.utils.JwtUtil;
 import com.whz.utils.Md5Util;
 import com.whz.utils.ThreadLocalUtil;
 import jakarta.validation.constraints.Pattern;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author whz
@@ -102,5 +103,73 @@ public class UserController {
         String userName = (String)map.get("username");  // 对应表中的username列
         User user = userService.findByUserName(userName);
         return Result.success(user);
+    }
+
+    /**
+     * @description 更新用户数据
+     *
+     * @param user @RequestBody表示读取请求集的数据转换为JSON对象
+     * @return
+     * @return Result
+     * @date
+     */
+    @PutMapping("/update")
+    public Result update(@RequestBody @Validated User user) {
+        userService.update(user);
+        return Result.success();
+    }
+
+    /**
+     * @description
+     *
+     * @param avatarUrl 利用@URL可以限定传入参数为URL格式
+     * @return
+     * @return Result
+     * @date
+     */
+    @PatchMapping("/updateAvatar")
+    public Result updateAvatar(@RequestParam @URL String avatarUrl) {
+        userService.updateAvatar(avatarUrl);
+        return Result.success();
+    }
+
+    /**
+     * @description 更新密码
+     *
+     * @param params
+     * @return
+     * @return com.whz.pojo.Result
+     * @date
+     */
+    @PatchMapping("/updatePwd")
+    public Result updatePwd(@RequestBody Map<String, String> params) {
+        // 校验参数
+        String oldPassword = params.get("old_pwd");
+        String newPassword = params.get("new_pwd");
+        String confirmPassword = params.get("re_pwd");
+
+        if (!StringUtils.hasLength(oldPassword)
+                || !StringUtils.hasLength(newPassword)
+                || !StringUtils.hasLength(confirmPassword)) {
+            return Result.error("缺少必要的参数");
+        }
+
+        // 原密码是否正确
+        // 调用userService根据用户名拿到原密码，再与oldPassword比较
+        Map<String, Object> map = ThreadLocalUtil.get();
+        String userName = (String)map.get("username");
+        User loginUser = userService.findByUserName(userName);
+        if (!loginUser.getPassword().equals(Md5Util.getMD5String(oldPassword))) {
+            return Result.error("原密码错误");
+        }
+
+        // newPassword与confirmPassword是否一致
+        if (!confirmPassword.equals(newPassword)) {
+            return Result.error("两次输入的新密码不一致");
+        }
+
+        // 调用userService完成更新
+        userService.updatePwd(newPassword);
+        return Result.success();
     }
 }
