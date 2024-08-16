@@ -12,12 +12,12 @@ public interface UserService {
     /**
      * @description 根据用户名查询用户
      *
-     * @param userName
+     * @param username
      * @return
      * @return com.whz.pojo.User
      * @date
      */
-    User findByUserName(String userName);
+    User findByUserName(String username);
 
     /**
      * @description 注册

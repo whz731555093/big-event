@@ -8,6 +8,8 @@ import com.whz.utils.Md5Util;
 import com.whz.utils.ThreadLocalUtil;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.URL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -25,26 +27,28 @@ import java.util.Map;
 @RequestMapping("/user")
 @Validated
 public class UserController {
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     private UserService userService;
 
     /**
      * @description 用户注册
      *
-     * @param userName
+     * @param username
      * @param password
      * @return
      * @return com.whz.pojo.Result
      * @date
      */
     @PostMapping("/register")
-    public Result register(@Pattern(regexp = "^\\S{5,16}$") String userName,
+    public Result register(@Pattern(regexp = "^\\S{5,16}$") String username,
            @Pattern(regexp = "^\\S{5,16}$")String password) {
-        User u = userService.findByUserName(userName);
+        User u = userService.findByUserName(username);
         // 查询用户是否存在
         if(u == null) {
             //没被占用 注册
-            userService.register(userName, password);
+            userService.register(username, password);
             return Result.success();
         } else {
             return Result.error("用户名已被占用");
@@ -54,19 +58,20 @@ public class UserController {
     /**
      * @description 用户登录
      *
-     * @param userName
+     * @param username
      * @param password
      * @return
      * @return com.whz.pojo.Result<java.lang.String>
      * @date
      */
     @PostMapping("/login")
-    public Result<String> login(@Pattern(regexp = "^\\S{5,16}$") String userName,
+    public Result<String> login(@Pattern(regexp = "^\\S{5,16}$") String username,
             @Pattern(regexp = "^\\S{5,16}$")String password) {
         // 根据用户名查询用户
-        User loginUser = userService.findByUserName(userName);
+        User loginUser = userService.findByUserName(username);
         // 判断该用户是否存在
         if(loginUser == null) {
+            logger.error("用户名为：{}", username);
             return Result.error("用户名错误");
         }
         // 判断密码是否正确 注意需要比较的是加密的密码
@@ -92,16 +97,16 @@ public class UserController {
 //    public Result<User> userInfo(@RequestHeader(name = "Authorization") String token) {
 //        // 根据用户名查询用户
 //        Map<String, Object> map = JwtUtil.parseToken(token);
-//        String userName = (String)map.get("username");
+//        String username = (String)map.get("username");
 //
-//        User user = userService.findByUserName(userName);
+//        User user = userService.findByUserName(username);
 //        return Result.success(user);
 //    }
     @GetMapping("/userInfo")
     public Result<User> userInfo() {
         Map<String, Object> map = ThreadLocalUtil.get();
-        String userName = (String)map.get("username");  // 对应表中的username列
-        User user = userService.findByUserName(userName);
+        String username = (String)map.get("username");  // 对应表中的username列
+        User user = userService.findByUserName(username);
         return Result.success(user);
     }
 
@@ -157,8 +162,8 @@ public class UserController {
         // 原密码是否正确
         // 调用userService根据用户名拿到原密码，再与oldPassword比较
         Map<String, Object> map = ThreadLocalUtil.get();
-        String userName = (String)map.get("username");
-        User loginUser = userService.findByUserName(userName);
+        String username = (String)map.get("username");
+        User loginUser = userService.findByUserName(username);
         if (!loginUser.getPassword().equals(Md5Util.getMD5String(oldPassword))) {
             return Result.error("原密码错误");
         }

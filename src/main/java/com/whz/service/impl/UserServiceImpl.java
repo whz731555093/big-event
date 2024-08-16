@@ -1,10 +1,13 @@
 package com.whz.service.impl;
 
+import com.whz.controller.UserController;
 import com.whz.mapper.UserMapper;
 import com.whz.pojo.User;
 import com.whz.service.UserService;
 import com.whz.utils.Md5Util;
 import com.whz.utils.ThreadLocalUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,21 +21,24 @@ import java.util.Map;
  */
 @Service
 public class UserServiceImpl implements UserService {
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
     @Autowired
     private UserMapper userMapper;
 
     @Override
-    public User findByUserName(String userName) {
-        return userMapper.findByUserName(userName);
+    public User findByUserName(String username) {
+        logger.info("您的用户名为: {}", username);
+        return userMapper.findByUserName(username);
     }
 
     @Override
-    public void register(String userName, String password) {
+    public void register(String username, String password) {
         // 加密
         String md5String = Md5Util.getMD5String(password);
 
         // 添加
-        userMapper.add(userName, md5String);
+        userMapper.add(username, md5String);
     }
 
     @Override
