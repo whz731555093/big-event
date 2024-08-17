@@ -30,7 +30,7 @@ public class Category {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;//更新时间
 
-    // 如果某个校验项没设定分组，默认属于Default分组
+    // 如果某个校验项未设定分组，默认属于Default分组
     // 分组之间可以继承，A extends B，则A中拥有B中的所有校验项
 
     public interface Add extends Default {
