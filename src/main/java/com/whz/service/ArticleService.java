@@ -1,6 +1,7 @@
 package com.whz.service;
 
 import com.whz.pojo.Article;
+import com.whz.pojo.PageBean;
 
 /**
  * @author MyPC
@@ -10,4 +11,10 @@ import com.whz.pojo.Article;
 public interface ArticleService {
     // 添加文章
     void add(Article article);
+
+    // 条件分页列表查询
+    PageBean<Article> list(Integer pageNum, Integer pageSize, Integer categoryId, String state);
+
+    // 获取文章详情
+    Article findById(Integer id);
 }

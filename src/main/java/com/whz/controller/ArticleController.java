@@ -1,15 +1,12 @@
 package com.whz.controller;
 
 import com.whz.pojo.Article;
+import com.whz.pojo.PageBean;
 import com.whz.pojo.Result;
 import com.whz.service.ArticleService;
-import com.whz.utils.JwtUtil;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.http.HttpResponse;
-import java.util.Map;
 
 /**
  * @author whz
@@ -47,8 +44,22 @@ public class ArticleController {
     }
 
     @PostMapping
-    public Result add(@RequestBody Article article) {
+    public Result add(@RequestBody @Validated Article article) {
         articleService.add(article);
         return Result.success();
+    }
+
+    @GetMapping
+    public Result<PageBean<Article>> list(Integer pageNum, Integer pageSize,
+                                          @RequestParam(required = false) Integer categoryId,    // 表示请求的url中，该参数非必须
+                                          @RequestParam(required = false) String state) {   // 表示请求的url中，该参数非必须
+        PageBean<Article> pb = articleService.list(pageNum, pageSize, categoryId, state);
+        return Result.success(pb);
+    }
+
+    @GetMapping("/detail")
+    public Result<Article> detail(Integer id) {
+        Article article = articleService.findById(id);
+        return Result.success(article);
     }
 }
