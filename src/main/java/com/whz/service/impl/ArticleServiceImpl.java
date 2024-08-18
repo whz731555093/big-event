@@ -63,4 +63,15 @@ public class ArticleServiceImpl implements ArticleService {
     public Article findById(Integer id) {
         return articleMapper.select(id);
     }
+
+    @Override
+    public void update(Article article) {
+        article.setUpdateTime(LocalDateTime.now());
+        articleMapper.update(article);
+    }
+
+    @Override
+    public void delete(Integer id) {
+        articleMapper.delete(id);
+    }
 }

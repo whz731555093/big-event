@@ -62,4 +62,16 @@ public class ArticleController {
         Article article = articleService.findById(id);
         return Result.success(article);
     }
+
+    @PutMapping
+    public Result update(@RequestBody @Validated Article article) {
+        articleService.update(article);
+        return Result.success();
+    }
+
+    @DeleteMapping
+    public Result delete(Integer id) {
+        articleService.delete(id);
+        return Result.success();
+    }
 }
