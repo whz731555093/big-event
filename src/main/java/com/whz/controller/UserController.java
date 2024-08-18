@@ -11,12 +11,15 @@ import org.hibernate.validator.constraints.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author whz
@@ -31,6 +34,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * @description 用户注册
@@ -81,6 +86,11 @@ public class UserController {
             claims.put("id", loginUser.getId());
             claims.put("username", loginUser.getUsername());
             String token = JwtUtil.genToken(claims);
+
+            // 把token存储到redis中
+            // ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+            // operations.set(token, token, 1, TimeUnit.HOURS);
+
             return Result.success(token);
         }
 
@@ -147,7 +157,7 @@ public class UserController {
      * @date
      */
     @PatchMapping("/updatePwd")
-    public Result updatePwd(@RequestBody Map<String, String> params) {
+    public Result updatePwd(@RequestBody Map<String, String> params, @RequestHeader("Authorization") String token) {
         // 校验参数
         String oldPassword = params.get("old_pwd");
         String newPassword = params.get("new_pwd");
@@ -175,6 +185,11 @@ public class UserController {
 
         // 调用userService完成更新
         userService.updatePwd(newPassword);
+
+        // 删除redis中旧的token
+//        ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+//        operations.getOperations().delete(token);
+
         return Result.success();
     }
 }
