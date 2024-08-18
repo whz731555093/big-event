@@ -44,8 +44,9 @@ public class CategoryController {
         return Result.success();
     }
 
-    @DeleteMapping("/{id}")
-    public Result delete(@PathVariable("id") Integer id) {
+    // 没法成功响应
+    @DeleteMapping
+    public Result delete(Integer id) {
         categoryService.delete(id);
         return Result.success();
     }

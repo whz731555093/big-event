@@ -1,12 +1,12 @@
 package com.whz.controller;
 
+import com.whz.pojo.Article;
 import com.whz.pojo.Result;
+import com.whz.service.ArticleService;
 import com.whz.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.http.HttpResponse;
 import java.util.Map;
@@ -19,6 +19,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/article")
 public class ArticleController {
+    @Autowired
+    private ArticleService articleService;
 
     /**
      * @description 获取文章列表的两个版本
@@ -42,5 +44,11 @@ public class ArticleController {
     @GetMapping("/list")
     public Result<String> list() {
         return Result.success("所有的文章数据...");
+    }
+
+    @PostMapping
+    public Result add(@RequestBody Article article) {
+        articleService.add(article);
+        return Result.success();
     }
 }
