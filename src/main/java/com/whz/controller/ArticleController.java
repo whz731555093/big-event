@@ -51,8 +51,8 @@ public class ArticleController {
 
     @GetMapping
     public Result<PageBean<Article>> list(Integer pageNum, Integer pageSize,
-                                          @RequestParam(required = false) Integer categoryId,    // 表示请求的url中，该参数非必须
-                                          @RequestParam(required = false) String state) {   // 表示请求的url中，该参数非必须
+          @RequestParam(required = false) Integer categoryId,    // 表示请求的url中，该参数非必须
+          @RequestParam(required = false) String state) {   // 表示请求的url中，该参数非必须
         PageBean<Article> pb = articleService.list(pageNum, pageSize, categoryId, state);
         return Result.success(pb);
     }
